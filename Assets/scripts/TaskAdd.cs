@@ -18,9 +18,14 @@ public class  TaskAdd: MonoBehaviour {
 	public GameObject list;
     public InputField inputText;
 
+    public List<GameObject> tasks = new List<GameObject>();
+
     //Размеры
     private int height = 37;
     private int currentPosition = 0;
+
+    private Button butRename;
+    private Button butRemove;
 
     private SQLiteManager db;
 
@@ -28,6 +33,10 @@ public class  TaskAdd: MonoBehaviour {
     {
         db = new SQLiteManager();
         this.getDoings();
+
+        butRemove = remove.GetComponent<Button>();
+        //butRename = rename.GetComponent<Button>();
+
     }
 
     /// <summary>
@@ -43,6 +52,33 @@ public class  TaskAdd: MonoBehaviour {
 		Instans(inputText.text, result);
 
         inputText.text = "";
+    }
+
+    /// <summary>
+    /// Удалить запись
+    /// </summary>
+    public void removeDoing(int id, GameObject target)
+    {
+        //Удаляем запись из бд
+        int result = db.Query("DELETE FROM tasks WHERE rowid = '"+ id +"'");
+
+        //Размещаем задачи
+        this.removeAllDoing();
+        this.getDoings();
+    }
+
+    /// <summary>
+    /// Удаляем все задачи
+    /// </summary>
+    public void removeAllDoing()
+    {
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            Destroy(tasks[i]);
+            
+        }
+        currentPosition = 0;
+        tasks.Clear();
     }
 
     /// <summary>
@@ -64,18 +100,29 @@ public class  TaskAdd: MonoBehaviour {
     {
         //размещаем
         GameObject obj = Instantiate(doing) as GameObject;
-        obj.transform.parent = list.transform;
+        obj.transform.SetParent(list.transform);
         obj.transform.localScale = Vector3.one;
         obj.transform.localPosition = new Vector3(0, currentPosition, 0);
         currentPosition -= height;
         //задаем текст
         obj.transform.FindChild("Label").GetComponent<Text>().text = text;
-		obj.GetComponent<RectTransform>().sizeDelta = new Vector2(0, height);
-		//Cобытие изменение toggle
-		Toggle toggle = obj.GetComponent<Toggle>();
-		toggle.onValueChanged.AddListener ((on) => { 
-			if(on)
-				Debug.Log(id); 
+		obj.GetComponent<RectTransform>().sizeDelta = new Vector2(-28, height);
+        tasks.Add(obj);
+        //Cобытие изменение toggle
+        Toggle toggle = obj.GetComponent<Toggle>();
+		toggle.onValueChanged.AddListener ((on) => {
+            if (on)
+            {
+                remove.SetActive(true);
+                rename.SetActive(true);
+                butRemove.onClick.AddListener(() => { removeDoing(id, toggle.gameObject); });
+                Debug.Log(id);
+            }
+            else
+            {
+                remove.SetActive(false);
+                rename.SetActive(false);
+            }
 		});
 
         //увеличиваем лист с задачами
