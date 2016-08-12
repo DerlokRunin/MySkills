@@ -243,3 +243,11 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/Library
+/ProjectSettings
+/Temp
+/MySkills.sln
+/MySkills.CSharp.Plugins.csproj
+/MySkills.CSharp.csproj
+/Assembly-CSharp.csproj
+/Assembly-CSharp-firstpass.csproj
