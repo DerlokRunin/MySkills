@@ -17,6 +17,8 @@ public class  TaskAdd: MonoBehaviour {
     public GameObject doing;
 	public GameObject list;
     public InputField inputText;
+    public InputField inputId;
+    public InputField inputRedText; 
 
     public List<GameObject> tasks = new List<GameObject>();
 
@@ -35,7 +37,7 @@ public class  TaskAdd: MonoBehaviour {
         this.getDoings();
 
         butRemove = remove.GetComponent<Button>();
-        //butRename = rename.GetComponent<Button>();
+        butRename = rename.GetComponent<Button>();
 
     }
 
@@ -52,6 +54,20 @@ public class  TaskAdd: MonoBehaviour {
 		Instans(inputText.text, result);
 
         inputText.text = "";
+    }
+
+    /// <summary>
+    /// Редактировать задачу
+    /// </summary>
+    public void renameDoing()
+    {
+        //обновляем запись в бд
+        int result = db.Query("UPDATE tasks SET text = '"+ inputRedText.text + "' WHERE rowid = '" + inputId.text + "'");
+        //Размещаем задачи
+        this.removeAllDoing();
+        this.getDoings();
+        inputRedText.text = "";
+        inputId.text = "";
     }
 
     /// <summary>
@@ -116,6 +132,10 @@ public class  TaskAdd: MonoBehaviour {
                 remove.SetActive(true);
                 rename.SetActive(true);
                 butRemove.onClick.AddListener(() => { removeDoing(id, toggle.gameObject); });
+                butRename.onClick.AddListener(() => {
+                    inputId.text = "" + id;
+                    inputRedText.text = obj.transform.FindChild("Label").GetComponent<Text>().text;
+                });
                 Debug.Log(id);
             }
             else
