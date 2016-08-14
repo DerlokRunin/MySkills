@@ -14,10 +14,11 @@ public class DataBase : MonoBehaviour {
 
     private static SQLiteManager db;
 
-
-    void Awake()
+    
+    static DataBase()
     {
-        db = new SQLiteManager();
+        if (db == null)
+            db = new SQLiteManager();
     }
 
     /// <summary>

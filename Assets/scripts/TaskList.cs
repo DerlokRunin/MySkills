@@ -16,7 +16,8 @@ public class TaskList : MonoBehaviour
 
     public GameObject doing;
 
-    private List<Task> tasks = new List<Task>();
+    [HideInInspector]
+    public List<Task> tasks = new List<Task>();
 
     //Размеры
     private int height = 37;
@@ -27,14 +28,14 @@ public class TaskList : MonoBehaviour
     /// </summary>
     public void CreateTaskList()
     {
-        List<string[]> result = DataBase.queryResult("SELECT rowid, text, data FROM tasks");
+        List<string[]> result = DataBase.queryResult("SELECT rowid, text FROM tasks");
         foreach (var item in result)
         {
             //Размещаем на сцене
             GameObject obj = InstansTask();
 
             //Сохраняем задачу и добавляем в лист
-            Task task = new Task(obj, item[1], Convert.ToInt32(item[0]));
+            Task task = obj.GetComponent<Task>().Add(item[1], Convert.ToInt32(item[0]));
             tasks.Add(task);
         }
     }
@@ -44,6 +45,10 @@ public class TaskList : MonoBehaviour
     /// </summary>
     public void ClearTaskList()
     {
+        foreach (Task task in tasks)
+        {
+            Destroy(task.obj);
+        }
         tasks.Clear();
     }
 
@@ -57,7 +62,7 @@ public class TaskList : MonoBehaviour
         GameObject obj = InstansTask();
 
         //Сохраняем задачу и добавляем в лист
-        Task task = new Task(obj, text);
+        Task task =  obj.GetComponent<Task>().Add(text);
         tasks.Add(task);
     }
 
@@ -72,7 +77,11 @@ public class TaskList : MonoBehaviour
             if(task.id == id)
             {
                 task.Delete();
-                tasks.Remove(task);
+                currentPosition = 0;
+                ClearTaskList();
+                CreateTaskList();
+                return;
+                
             }
         }
     }
@@ -89,6 +98,7 @@ public class TaskList : MonoBehaviour
             if (task.id == id)
             {
                 task.Edit(text);
+                return;
             }
         }
     }

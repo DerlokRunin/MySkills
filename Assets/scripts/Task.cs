@@ -9,7 +9,8 @@ using System;
  *  @version 1.0
  */
 
-public class Task : MonoBehaviour {
+public class Task : MonoBehaviour
+{
 
     public int id;
     public Text label;
@@ -19,31 +20,33 @@ public class Task : MonoBehaviour {
     /// <summary>
     /// Создаем новую задачу
     /// </summary>
-    /// <param name="obj">обьект на сцене</param>
     /// <param name="text">описание задачи</param>
-    public Task(GameObject obj, string text)
+    public Task Add(string text)
     {
-        this.obj = obj;
+        this.obj = gameObject;
         this.label = obj.transform.FindChild("Label").GetComponent<Text>();
         this.label.text = text;
         this.toggle = obj.GetComponent<Toggle>();
 
         string formatData = DateTime.Now.ToString("yyyy-dd-MM hh:mm:ss");
         this.id = DataBase.query("INSERT OR REPLACE INTO tasks (text, data) VALUES('" + text + "', '" + formatData + "')");
+
+        return this;
     }
 
     /// <summary>
     /// Добавляем новую задачу
     /// </summary>
-    /// <param name="obj">обьект на сцене</param>
     /// <param name="text">описание задачи</param>
-    public Task(GameObject obj, string text, int id)
+    /// <param name="id">id задачи</param>
+    public Task Add(string text, int id)
     {
-        this.obj = obj;
+        this.obj = gameObject;
         this.label = obj.transform.FindChild("Label").GetComponent<Text>();
         this.label.text = text;
         this.toggle = obj.GetComponent<Toggle>();
         this.id = id;
+        return this;
     }
 
     /// <summary>
@@ -62,6 +65,5 @@ public class Task : MonoBehaviour {
     public void Delete()
     {
         DataBase.query("DELETE FROM tasks WHERE rowid = '" + this.id + "'");
-        Destroy(obj);
     }
 }
