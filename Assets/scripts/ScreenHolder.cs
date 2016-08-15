@@ -44,6 +44,10 @@ public class ScreenHolder : MonoBehaviour {
         string text = inputAddTextTask.text;
         taskList.CreateTask(text);
         SelectedTask();
+
+        //чтобы события не накапливались
+        butEdit.onClick.RemoveAllListeners();
+        butDelete.onClick.RemoveAllListeners();
     }
 
     /// <summary>
@@ -87,8 +91,26 @@ public class ScreenHolder : MonoBehaviour {
                 {
                     butEdit.gameObject.SetActive(false);
                     butDelete.gameObject.SetActive(false);
+                    butEdit.onClick.RemoveAllListeners();
+                    butDelete.onClick.RemoveAllListeners();
                 }
             });
         }
+    }
+
+    /// <summary>
+    /// Нажатие на клавишу редактирования
+    /// </summary>
+    private void ButEditClick()
+    {
+
+    }
+
+    /// <summary>
+    /// Нажатие на клавишу удаления
+    /// </summary>
+    private void ButDeleteClick()
+    {
+
     }
 }
